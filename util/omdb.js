@@ -12,24 +12,37 @@ function getSearchResults(searchTerm, page, callback){
 
     axios.get(getListUrl)
         .then(result => {
-            var search = result.data.Search;
-            var promises = [];
-            for(let i=0; i< search.length; i++){
-                var obj = search[i];
-                var imdbId = obj.imdbID;
-                var singleGet = url + "&i=" + imdbId;
-                var getProm = axios.get(singleGet);
-                promises.push(getProm);
-            }
+            //console.log(result.data);
+            if(result.data.Response == "True"){
+                var search = result.data.Search;
+                var promises = [];
+                for(let i=0; i< search.length; i++){
+                    var obj = search[i];
+                    var imdbId = obj.imdbID;
+                    var singleGet = url + "&i=" + imdbId;
+                    var getProm = axios.get(singleGet);
+                    promises.push(getProm);
+                }
+                Promise.all(promises).then(values => {
+                    var responseData = [];
 
-            var allPromises = new Promise.all(promises);
+                    for(index in values){
+                        responseData.push(values[index].data);
+                    }
 
-            allPromises.then(values => {
-                console.log(values);
-            })
+                 callback(responseData);
+                })
+                .catch(error => {
+                    console.log(error);
+                    callback({"Error" : "Internal Error"});
+                });
+            }else{
+                callback({"Error" : "Movie not found!"});
+            }   
         })
         .catch(error => {
             console.log("Err in fetching data "+ error);
+            callback({"Error" : "Internal Error"});
         });
 }
 

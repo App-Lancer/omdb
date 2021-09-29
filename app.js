@@ -12,7 +12,7 @@ app.get("/search/:searchTerm", (req, resp, next) => {
     var page = req.query.page;
 
     omdb.getSearchResults(searchTerm, page == undefined ? 1 : page, function(results){
-
+        resp.json(results);
     });
 })
 
