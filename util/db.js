@@ -1,7 +1,9 @@
 const mysql = require("mysql");
 
+//fields list to store in DB
 var fields = ["imdbID", "Title", "Year", "Runtime", "Genre", "Plot", "Language", "Awards", "Poster", "imdbRating", "Type"];
 
+//Field map for DB to client
 var tableToKeyMap = {
     imdbID : "imdbID",
     title : "Title",
@@ -16,6 +18,7 @@ var tableToKeyMap = {
     type : "Type"
 }
 
+//connect to mysqlDB
 function connectDB(callback){
 
     var connection = mysql.createConnection({
@@ -32,6 +35,7 @@ function connectDB(callback){
     })
 }
 
+// To add a movie comparison into the database
 function addToDB(inputData, callback){
     connectDB(function(connection){
         getMaxId(connection, function(maxValue){
@@ -57,7 +61,7 @@ function addToDB(inputData, callback){
                 connection.query(movieQuery, [values], function(err){
                     if(err) throw err;
 
-                    callback({"message" : "Record added"});
+                    callback({"message" : "Record added", "id" : maxValue});
                     connection.end();
                 });
             });
@@ -65,6 +69,7 @@ function addToDB(inputData, callback){
     });
 }
 
+//To fetch max id in comparison db to auto popupate the id for next movie comparison add
 function getMaxId(connection, callback){
     connection.query("select max(id) as max from Comparison", function(err, result){
         if(err) throw err;
@@ -78,10 +83,11 @@ function getMaxId(connection, callback){
     });
 }
 
+//To fetch movie comparison getList from DB
 function getList(page, callback){
-    var records = (page - 1) * 10;
+    var records = (page - 1) * 100;
     connectDB(function(connection){
-        var query = "Select * from Comparison LIMIT "+ records +", 10";
+        var query = "Select * from Comparison LIMIT "+ records +", 100";
 
         connection.query(query, function(err,result){
             if(err) throw err;
@@ -99,6 +105,7 @@ function getList(page, callback){
     });
 }
 
+//To fetch a single movie comparison record from the DB
 function get(id, callback){
 
     connectDB(function(connection){

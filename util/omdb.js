@@ -6,15 +6,13 @@ const fieldsList = ["Plot", "Language", "imdbRating", "imdbVotes", "Runtime", "G
 
 const url = "http://www.omdbapi.com?apikey=" + apiKey;
 
+//To search for the search term in OMDB and get list data
 function getSearchResults(searchTerm, page, callback){
 
     let getListUrl = url + "&page=" + page + "&s=" + searchTerm;
 
-    console.log(page);
-    console.log(searchTerm);
     axios.get(getListUrl)
         .then(result => {
-            console.log(result.data);
             if(result.data.Response == "True"){
                 var search = result.data.Search;
                 var promises = [];
@@ -25,12 +23,17 @@ function getSearchResults(searchTerm, page, callback){
                     var getProm = axios.get(singleGet);
                     promises.push(getProm);
                 }
+
+                console.log("Promise started");
+                //To fetch individual fetch of the components
                 Promise.all(promises).then(values => {
                     var responseData = [];
 
                     for(index in values){
                         responseData.push(values[index].data);
                     }
+
+                    console.log("Promise completed")
 
                  callback(responseData);
                 })
