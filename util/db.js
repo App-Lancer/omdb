@@ -91,7 +91,7 @@ function getList(page, callback){
 
         connection.query(query, function(err,result){
             if(err) throw err;
-            
+        
             var results = [];
             for(index in result){
                 var obj = {};

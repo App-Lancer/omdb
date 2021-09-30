@@ -45,17 +45,25 @@ app.post("/comparison", (req, res, next) => {
 //To fetech comparison list view from db and send to client
 app.get("/comparison", (req, res, next) => {
     var page = req.query.page;
-    db.getList(page == undefined ? 1 : page, function(result){
-        res.status(200).json(result);
-    });
+    try{
+        db.getList(page == undefined ? 1 : page, function(result){
+            res.status(200).json(result);
+        });
+    }catch(err){
+        res.status(400).json({"message" : "Internal Error"});
+    }
 });
 
 //To fetch a single comparison and send the data to client
 app.get("/comparison/:comparisonid", (req, res, next)=> {
     var id = req.params.comparisonid;
-    db.get(id, function(result){
-        res.status(200).json(result);
-    });
+    try{
+        db.get(id, function(result){
+            res.status(200).json(result);
+        });
+    }catch(err){
+        res.status(400).json({"message" : "Internal Error"});
+    }
 });
 
 
