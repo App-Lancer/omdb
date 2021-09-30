@@ -10,9 +10,11 @@ function getSearchResults(searchTerm, page, callback){
 
     let getListUrl = url + "&page=" + page + "&s=" + searchTerm;
 
+    console.log(page);
+    console.log(searchTerm);
     axios.get(getListUrl)
         .then(result => {
-            //console.log(result.data);
+            console.log(result.data);
             if(result.data.Response == "True"){
                 var search = result.data.Search;
                 var promises = [];
